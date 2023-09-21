@@ -171,3 +171,5 @@ int is_exit_status_bad() {
 
 ###XII. SDB的构建
 其余见代码
+
+**PA1 Manual到此结束**
