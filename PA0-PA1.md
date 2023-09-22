@@ -10,7 +10,8 @@ yingzesun@mail.ustc.edu.cn
 该阶段将完成`ics2023`项目的环境配置工作,你需要做的仅仅是跟随yzh的脚步完成pa0中的内容
 
 ###I. 命令 ```make menuconfig``` 报错 
-使用`apt`(or some package management)来安装需要的软件，注意查看报错信息
+`menuconfig`将会是我们的有力工具，记得熟悉这位朋友！
+如果你从未使用过`menuconfig`,在运行时可能会遇到环境错误，使用`apt`(or some package management)来安装需要的软件，注意查看报错信息
 
 **PA0 Manual 到此结束**
 
@@ -170,6 +171,75 @@ int is_exit_status_bad() {
 我们希望`q`代表了退出而不是中断，即置`nemu_state.state`为`NEMU_QUIT`：向`cmd_q`中添加该代码即可完成任务
 
 ###XII. SDB的构建
-其余见代码
+关于命令`si` ,`info` , `x`见如下代码:
+```
+
+// ./src/monitor/sdb/sdb.c
+
+static int cmd_si(char *args)
+{	
+  //parse args
+  char *arg = strtok(NULL," ");
+  int i = 0;
+  if (!arg)	i = 1;
+  else sscanf(arg , "%d" , &i);
+  cpu_exec(i);	  
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  //parse args
+  char *arg = strtok(NULL , " ");
+  if (!strcmp(arg , "r"))
+		isa_reg_display();
+//  else if 
+  else 
+    printf("info: Invaild Args\n");
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  char *arg = strtok(NULL , " ");
+  int i = 0;
+  if (!arg) 
+  {
+    printf("x: Too few Arguments\n");
+    return 0;
+  } 
+  sscanf(arg , "%d" , &i);
+  arg = strtok(NULL , " ");
+  if (!arg)
+  {
+    printf("x: Too few Arguments\n");
+    return 0;
+  }
+  vaddr_t addr = 0;
+  sscanf(arg, "%x" , &addr);
+  for (int j = 0 ; j < i ; j++)
+	{
+		printf("0x%x: " , addr + 4 * j);
+		for (int k = 3 ; k >= 0 ; k++)
+			//Little endian
+			printf("%02x " , vaddr_read(addr + 4 * j + k, 1));		
+		printf("\n");
+	}
+  return 0;
+}
+
+static struct {
+  const char *name;
+  const char *description;
+  int (*handler) (char *);
+} cmd_table [] = {
+  { "help", "Display information about all supported commands", cmd_help },
+  { "c", "Continue the execution of the program", cmd_c },
+  { "q", "Exit NEMU", cmd_q },
+  { "si" , "Execute by single step" , cmd_si },
+  { "info" , "Show info" , cmd_info },
+  { "x" , "Scan Memory" , cmd_x },
+  /* TODO: Add more commands */
+
+};
+```
 
 **PA1 Manual到此结束**
