@@ -11,23 +11,31 @@ yingzesun@mail.ustc.edu.cn
 
 ###I. 命令 ```make menuconfig``` 报错 
 `menuconfig`将会是我们的有力工具，记得熟悉这位朋友！
-如果你从未使用过`menuconfig`,在运行时可能会遇到环境错误，使用`apt`(or some package management)来安装需要的软件，注意查看报错信息
+如果你从未使用过`menuconfig`,在运行时可能会遇到一些错误，使用`apt`(or some package management)来安装需要的软件，注意查看报错信息
 
 **PA0 Manual 到此结束**
 
 ***
 ***
 ##NJU PA1
+
+###Note: 谨慎选择库函数
+尽量不要使用不安全的库函数:`strcpy`,`scanf` ...等,它们可能具有**潜在的安全性问题**,例如[缓冲区溢出(buffer overflow)](https://en.wikipedia.org/wiki/Buffer_overflow),你需要足够重视这个问题
+
 ###PRE: 在着手PA1之前,一些必要的生存技能:
+ - RTFM
+ - RTFSC
+ - STFW
  - 对指针,函数指针,[jump table](https://en.wikipedia.org/wiki/Branch_table)等拥有基本了解
  - 正则表达式
- - `man` 
  - gdb
  - 了解Makefile的一些基本概念,了解make命令的含义
    - 例如该make命令:`$make -j12 ARCH=native run mainargs=mario`
  - Bash(或其他shell)的一些基本内建命令
  - C99标准
  - Little endian
+ - BNF -- 巴克斯-诺尔范式
+
 ###I. 为了正确运行**fceux**，你的运行环境可能需要配置**SDL2/SDL.h**
 
 如果你的环境通过apt来管理包,使用 ```sudo apt-get install libsdl2-dev``` 来配置SDL_LIB
@@ -40,8 +48,8 @@ yingzesun@mail.ustc.edu.cn
 配置ccache过程如下：
 1. 通过编辑器修改文件`bashrc`,其位于`~/.bashrc`下
 2. 追加`export PATH="$PATH:/usr/lib/ccache"`至文件尾
-3. 刷新`bashrc`,而不是注销用户并重新登陆,使用`source`指令来实现它:`source ./~bashrc`
-4. 使用`which gcc`来检查你的结果是否正确
+3. 刷新`bashrc`,而不是注销用户并重新登陆,使用`source`指令来实现它:`source ~/.bashrc`
+4. 通过`which gcc`来检查你的结果是否正确
 
 ###III. Which ISA to choose ？
 
@@ -109,6 +117,7 @@ make: *** [/home/epic/ics2023/nemu/scripts/native.mk:38: run] Error 1
 ```
 不难理解的是，程序返回结果出现了错误:
   - 在C和C++编程语言中，main函数的返回值（通常称为“退出状态”或“返回状态”）表示程序的执行结果。在大多数系统中，返回值为0表示程序成功执行，而非零值表示出现了某种错误。返回值1通常表示程序遇到了一些问题，但具体的问题可能因程序和上下文而异。
+  - 思考一下:为什么main的返回值是`int`类型?其他类型不可以吗?返回值返回到了哪里?尝试验证你的想法
 
 追溯到源码：键入`q`后发生了什么？
 ```
