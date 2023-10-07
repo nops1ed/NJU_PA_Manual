@@ -7,9 +7,11 @@ yingzesun@mail.ustc.edu.cn
 ##NJU PA0 
 
 ###PRE. 生存指南
-该阶段将完成`ics2023`项目的环境配置工作,你需要做的仅仅是跟随yzh的脚步完成pa0中的内容
+- 无
 
-###I. 命令 ```make menuconfig``` 报错 
+该阶段将完成`ics2023`项目的环境配置工作,你需要做的仅是跟随yzh的脚步完成pa0中的内容
+
+###你也许会遇到： 命令 ```make menuconfig``` 报错 
 `menuconfig`将会是我们的有力工具，记得熟悉这位朋友！
 如果你从未使用过`menuconfig`,在运行时可能会遇到一些错误，使用`apt`(or some package management)来安装需要的软件，注意查看报错信息
 
@@ -20,7 +22,7 @@ yingzesun@mail.ustc.edu.cn
 ##NJU PA1
 
 ###Note: 谨慎选择库函数
-尽量不要使用不安全的库函数:`strcpy`,`scanf` ...等,它们可能具有**潜在的安全性问题**,例如[缓冲区溢出(buffer overflow)](https://en.wikipedia.org/wiki/Buffer_overflow),你需要足够重视这个问题
+尽量不要使用不安全的库函数:`strcpy`,`scanf` ...等,它们可能具有**潜在的安全性问题**,例如[缓冲区溢出(buffer overflow)](https://en.wikipedia.org/wiki/Buffer_overflow)等,你需要足够重视这个问题
 
 ###PRE: 在着手PA1之前,一些必要的生存技能:
  - RTFM
@@ -47,7 +49,7 @@ yingzesun@mail.ustc.edu.cn
 你可以通过`man ccache`来查看ccache对应的manual
 配置ccache过程如下：
 1. 通过编辑器修改文件`bashrc`,其位于`~/.bashrc`下
-2. 追加`export PATH="$PATH:/usr/lib/ccache"`至文件尾
+2. 追加`export PATH="/usr/lib/ccache:$PATH"`至文件尾
 3. 刷新`bashrc`,而不是注销用户并重新登陆,使用`source`指令来实现它:`source ~/.bashrc`
 4. 通过`which gcc`来检查你的结果是否正确
 
@@ -55,6 +57,7 @@ yingzesun@mail.ustc.edu.cn
 
 - 可以选择`x86`,CISC指令种类多且复杂
 - 一周目推荐`RISC-V`,RISC指令格式简单且固定,实现难度低
+  - 后记：工程实践要求`RISC-V`64位版本
 - 谨慎选择`MIPS`
   - 二周目推荐
 
@@ -74,7 +77,7 @@ yingzesun@mail.ustc.edu.cn
     - 由`cpp`预处理源文件形成`*.i`的预处理文件
     - 由`cc`(或`cc1`)完成对预处理文件的编译,并形成`*.s`的汇编文件
     - 由`as`完成对汇编文件`*.s`的处理,产生二进制的可重定向文件`*.o`
-    - 由`ld`完成对文件`*.o`的链接,形成可执行文件,在Unix/Unix-like下,其格式为`ELF`,你可以通过`file FILENAME`来查看文件的`head`内容，其中包含了文件格式
+    - 由`ld`完成对文件`*.o`的链接,形成可执行文件,在Unix/Unix-like下,其格式为`ELF`,你可以通过`file $FILENAME`来查看文件的`head`内容，其中包含了文件格式
     - 最终由`loader`,将可执行文件加载至内存,改变pc指针,修改上下文,发生控制流转移等等一系列流程,进而执行该程序
 
 - 定义宏将在第一阶段由预处理器负责将宏展开
@@ -92,7 +95,7 @@ yingzesun@mail.ustc.edu.cn
 从Shell中获取
 
 ###IX. 对于Makefile中错误信息的解决
-```
+```c
 [src/monitor/monitor.c:20 welcome] Exercise: Please remove me in the source code and compile NEMU again.
 riscv32-nemu-interpreter: src/monitor/monitor.c:21: welcome: Assertion `0' failed.
 ```
@@ -112,15 +115,16 @@ represented in the new type until the value is in the range of the new type.
 
 ###XI. 优雅的退出
 当在sdb中输入q时nemu退出但会显示以下信息:
-```
+```c
 make: *** [/home/epic/ics2023/nemu/scripts/native.mk:38: run] Error 1
 ```
 不难理解的是，程序返回结果出现了错误:
   - 在C和C++编程语言中，main函数的返回值（通常称为“退出状态”或“返回状态”）表示程序的执行结果。在大多数系统中，返回值为0表示程序成功执行，而非零值表示出现了某种错误。返回值1通常表示程序遇到了一些问题，但具体的问题可能因程序和上下文而异。
-  - 思考一下:为什么main的返回值是`int`类型?其他类型不可以吗?返回值返回到了哪里?尝试验证你的想法
+  - 后记：大多数教材对C语言返回值的论述到此戛然而止,但实际上以上论述并不完善，C的返回值是一种具有`8 bit`结构体存储空间的“状态”，事实上，你总是可以通过很多方法来捕获他,若想获得更多关于`SEGXXX`的信息，STFW
+  - 思考一下:为什么main的返回值是`int`类型?真的是`int`类型吗?其他类型不可以吗?返回值返回到了哪里?尝试验证你的想法
 
 追溯到源码：键入`q`后发生了什么？
-```
+```c
 // ./src/monitor/sdb/sdb.c
 
     //some code else
@@ -148,7 +152,7 @@ void sdb_mainloop() {
 
 让我们在回到主程序中，以上代码均由函数`engine_start()`来完成,当`sdb_mainloop`结束后,`engine_start()`也将随之退出，此时pc将指向最后一条语句，即返回`is_exit_status_bad()`的值
 显然的是，此函数的返回值出现了问题
-```
+```c
 // ./src/nemu-main.c
 
 int main(int argc, char *argv[]) {
@@ -166,7 +170,7 @@ int main(int argc, char *argv[]) {
 }
 ```
 `is_exit_status_bad()`函数定位于:
-```
+```c
 // ./src/utils/state.c
 NEMUState nemu_state = { .state = NEMU_STOP };
 
@@ -181,7 +185,7 @@ int is_exit_status_bad() {
 
 ###XII. SDB的构建
 关于命令`si` ,`info` , `x`见如下代码:
-```
+```c
 
 // ./src/monitor/sdb/sdb.c
 
