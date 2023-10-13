@@ -88,7 +88,7 @@ yingzesun@mail.ustc.edu.cn
 
 ###VII. 为什么`init_monitor`中都是函数?
 - 便于调试，也便于阅读
-- 实现接口与实现分离
+- 实现接口与实现分离,抽象不同ISA差异
   - 拿`ISA`来举例,`init_monitor`中有函数`init_isa`,对于不同的ISA来说这个函数的实现方式应该是不同的,还记得yzh写的南大pa manual中曾说过："改变你选择的ISA不会对主体框架造成任何影响,你不必修改任何代码吗"?这种设计思维在这里体现了出来
 
 ###VIII. 参数从何而来？
