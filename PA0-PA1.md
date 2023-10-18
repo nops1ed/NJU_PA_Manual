@@ -92,7 +92,7 @@ yingzesun@mail.ustc.edu.cn
   - 拿`ISA`来举例,`init_monitor`中有函数`init_isa`,对于不同的ISA来说这个函数的实现方式应该是不同的,还记得yzh写的南大pa manual中曾说过："改变你选择的ISA不会对主体框架造成任何影响,你不必修改任何代码吗"?这种设计思维在这里体现了出来
 
 ###VIII. 参数从何而来？
-从Shell中获取
+于`abstract-machine`中脚本对应的mk文件
 
 ###IX. 对于Makefile中错误信息的解决
 ```c
